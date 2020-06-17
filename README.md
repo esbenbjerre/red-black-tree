@@ -9,9 +9,9 @@ A `RedBlackTree` can be constructed either by calling the `apply` or `from` meth
 ## Functions
 ```scala
 def contains[B >: A](x: B)(implicit ord: Ordering[B]): Boolean
-def +[B >: A](x: B)(implicit ord: Ordering[B]): Boolean
+def +[B >: A](x: B)(implicit ord: Ordering[B]): RedBlackTree[B]
 def updated[B >: A](x: B)(implicit ord: Ordering[B]): RedBlackTree[B]
-def -[B >: A](x: B)(implicit ord: Ordering[B]): Boolean
+def -[B >: A](x: B)(implicit ord: Ordering[B]): RedBlackTree[A]
 def deleted[B >: A](x: B)(implicit ord: Ordering[B]): RedBlackTree[A]
 def height: Int
 def size: Int
