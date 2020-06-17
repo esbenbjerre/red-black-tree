@@ -38,6 +38,6 @@ t3.findRight(_ > 0) // 0x2
 ```
 
 ## References
-[Germane, K. and Might, M. (July 2014)](#germane-and-might-2014). *"Deletion: The curse of the red-black tree"*. In: Journal of Functional Programming 24, pp. 423–433.
+Germane, K. and Might, M. (July 2014). *"Deletion: The curse of the red-black tree"*. In: Journal of Functional Programming 24, pp. 423–433.
 
-[Okasaki, C. (1998)](#okasaki-1998). *Purely Functional Data Structures*. Cambridge University Press.
+Okasaki, C. (1998). *Purely Functional Data Structures*. Cambridge University Press.
