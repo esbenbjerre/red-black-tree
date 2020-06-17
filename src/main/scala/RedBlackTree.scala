@@ -133,7 +133,7 @@ sealed trait RedBlackTree[+A] {
     case _ => 0
   }
 
-  final def foldLeft[B](z: B, f: (B, A) => B): B = this match {
+  def foldLeft[B](z: B, f: (B, A) => B): B = this match {
     case T(_, a, x, b) => b.foldLeft(f(a.foldLeft(z, f), x), f)
     case _ => z
   }
@@ -181,7 +181,7 @@ object RedBlackTree {
   def apply[A](elems: A*)(implicit ord: Ordering[A]): RedBlackTree[A] =
     elems.foldLeft(E: RedBlackTree[A])(_.updated(_))
 
-  def from[A](it: IterableOnce[A])(implicit ord: Ordering[A]): RedBlackTree[A] =
+  def from[A](it: Iterable[A])(implicit ord: Ordering[A]): RedBlackTree[A] =
     it.iterator.foldLeft(E: RedBlackTree[A])(_.updated(_))
 
 }
