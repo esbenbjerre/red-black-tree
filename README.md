@@ -1,6 +1,6 @@
 # red-black-tree
 
-Efficient immutable red-black trees written in Scala. Adapted from [Okasaki (1998)](#1) and [Germane and Might (2014)](#1).
+Efficient immutable red-black trees written in Scala. Adapted from [Okasaki (1998)](#references) and [Germane and Might (2014)](#references).
 
 ## Constructing
 
@@ -38,6 +38,6 @@ t3.findRight(_ > 0) // 0x2
 ```
 
 ## References
-<a id="germane-matthew-2014">Germane, K. and Might, M. (July 2014)</a>. *"Deletion: The curse of the red-black tree"*. In: Journal of Functional Programming 24, pp. 423–433.
+[Germane, K. and Might, M. (July 2014)](#germane-and-might-2014). *"Deletion: The curse of the red-black tree"*. In: Journal of Functional Programming 24, pp. 423–433.
 
-<a id="okasaki-1998">Okasaki, C. (1998)</a>. *Purely Functional Data Structures*. Cambridge University Press.
+[Okasaki, C. (1998)](#okasaki-1998). *Purely Functional Data Structures*. Cambridge University Press.
