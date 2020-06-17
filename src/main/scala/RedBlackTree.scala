@@ -17,14 +17,17 @@ sealed trait RedBlackTree[+A] {
   def contains[B >: A](x: B)(implicit ord: Ordering[B]): Boolean = {
     import ord.mkOrderingOps
     this match {
-      case E => false
-      case T(_, a, y, _) if x < y => a.contains(x)
-      case T(_, _, y, b) if x > y => b.contains(x)
-      case _ => true
+      case T(_, a, y, b) =>
+        if (x < y) a.contains(x)
+        else if (x > y) b.contains(x)
+        else true
+      case _ => false
     }
   }
 
-  def insert[B >: A](x: B)(implicit ord: Ordering[B]): RedBlackTree[B] = {
+  def +[B >: A](x: B)(implicit ord: Ordering[B]): RedBlackTree[B] = updated(x)
+
+  def updated[B >: A](x: B)(implicit ord: Ordering[B]): RedBlackTree[B] = {
 
     import ord.mkOrderingOps
 
@@ -40,13 +43,11 @@ sealed trait RedBlackTree[+A] {
       case _ => t
     }
 
-    def ins(x: B, t: RedBlackTree[A]): RedBlackTree[B] = {
-      t match {
-        case E => T(R, E, x, E)
-        case T(color, a, y, b) if x < y => lbalance(T(color, ins(x, a), y, b))
-        case T(color, a, y, b) if x > y => rbalance(T(color, a, y, ins(x, b)))
-        case _ => t
-      }
+    def ins(x: B, t: RedBlackTree[A]): RedBlackTree[B] = t match {
+      case E => T(R, E, x, E)
+      case T(color, a, y, b) if x < y => lbalance(T(color, ins(x, a), y, b))
+      case T(color, a, y, b) if x > y => rbalance(T(color, a, y, ins(x, b)))
+      case _ => t
     }
 
     def blacken(t: RedBlackTree[B]): RedBlackTree[B] = t match {
@@ -59,7 +60,9 @@ sealed trait RedBlackTree[+A] {
 
   }
 
-  def delete[B >: A](x: B)(implicit ord: Ordering[B]): RedBlackTree[A] = {
+  def -[B >: A](x: B)(implicit ord: Ordering[B]): RedBlackTree[A] = deleted(x)
+
+  def deleted[B >: A](x: B)(implicit ord: Ordering[B]): RedBlackTree[A] = {
 
     import ord.mkOrderingOps
 
@@ -156,22 +159,29 @@ sealed trait RedBlackTree[+A] {
     case _ => None
   }
 
-  def reduceLeft[B >: A](f: (B, A) => B): Option[B] = foldLeft(None, (x: Option[B], y: A) => x match {
-    case Some(x) => Some(f(x, y))
-    case None => Some(y)
-  })
+  def reduceLeft[B >: A](f: (B, A) => B): Option[B] =
+    foldLeft(None, (x: Option[B], y: A) => x match {
+      case Some(x) => Some(f(x, y))
+      case None => Some(y)
+    })
 
-  def reduceRight[B >: A](f: (A, B) => B): Option[B] = foldRight(None, (x: A, y: Option[B]) => y match {
-    case Some(y) => Some(f(x, y))
-    case None => Some(x)
-  })
+  def reduceRight[B >: A](f: (A, B) => B): Option[B] =
+    foldRight(None, (x: A, y: Option[B]) => y match {
+      case Some(y) => Some(f(x, y))
+      case None => Some(x)
+    })
+
+  override def toString: String =
+    s"RedBlackTree(${foldRight(List.empty[A], (e: A, acc: List[A]) => e :: acc).mkString(", ")})"
 
 }
 
 object RedBlackTree {
 
-  def apply[A](elems: A*)(implicit ord: Ordering[A]): RedBlackTree[A] = elems.foldLeft(E: RedBlackTree[A])(_.insert(_))
+  def apply[A](elems: A*)(implicit ord: Ordering[A]): RedBlackTree[A] =
+    elems.foldLeft(E: RedBlackTree[A])(_.updated(_))
 
-  def from[A](it: IterableOnce[A])(implicit ord: Ordering[A]): RedBlackTree[A] = it.iterator.foldLeft(E: RedBlackTree[A])(_.insert(_))
+  def from[A](it: IterableOnce[A])(implicit ord: Ordering[A]): RedBlackTree[A] =
+    it.iterator.foldLeft(E: RedBlackTree[A])(_.updated(_))
 
 }
