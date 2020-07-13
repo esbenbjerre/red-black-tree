@@ -15,8 +15,8 @@ def -[B >: A](x: B)(implicit ord: Ordering[B]): RedBlackTree[A]
 def deleted[B >: A](x: B)(implicit ord: Ordering[B]): RedBlackTree[A]
 def height: Int
 def size: Int
-def foldLeft[B](z: B, f: (B, A) => B): B
-def foldRight[B](z: B, f: (A, B) => B): B
+def foldLeft[B](z: B)(f: (B, A) => B): B
+def foldRight[B](z: B)(f: (A, B) => B): B
 def findLeft(f: A => Boolean): Option[A]
 def findRight(f: A => Boolean): Option[A]
 def reduceLeft[B >: A](f: (B, A) => B): Option[B]
@@ -32,7 +32,7 @@ val t1 = RedBlackTree('A', 'B', 'C')
 val t2 = RedBlackTree from Range(0, 3)
 val t3 = RedBlackTree from List(0x0, 0x1, 0x2)
 (t0 + 3).size // 4
-t1.foldLeft("", (acc: String, x) => acc + x) // ABC
+t1.foldLeft("")((acc: String, x) => acc + x) // ABC
 t2.reduceLeft(_ + _) // Some(3)
 t3.findRight(_ > 0) // 0x2
 ```

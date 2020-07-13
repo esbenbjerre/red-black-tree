@@ -10,7 +10,7 @@ case object E extends RedBlackTree[Nothing]
 
 case object EE extends RedBlackTree[Nothing]
 
-case class T[A](color: Color, left: RedBlackTree[A], element: A, right: RedBlackTree[A]) extends RedBlackTree[A]
+case class T[+A](color: Color, left: RedBlackTree[A], element: A, right: RedBlackTree[A]) extends RedBlackTree[A]
 
 sealed trait RedBlackTree[+A] {
 
@@ -133,13 +133,13 @@ sealed trait RedBlackTree[+A] {
     case _ => 0
   }
 
-  def foldLeft[B](z: B, f: (B, A) => B): B = this match {
-    case T(_, a, x, b) => b.foldLeft(f(a.foldLeft(z, f), x), f)
+  def foldLeft[B](z: B)(f: (B, A) => B): B = this match {
+    case T(_, a, x, b) => b.foldLeft(f(a.foldLeft(z)(f), x))(f)
     case _ => z
   }
 
-  def foldRight[B](z: B, f: (A, B) => B): B = this match {
-    case T(_, a, x, b) => a.foldRight(f(x, b.foldRight(z, f)), f)
+  def foldRight[B](z: B)(f: (A, B) => B): B = this match {
+    case T(_, a, x, b) => a.foldRight(f(x, b.foldRight(z)(f)))(f)
     case _ => z
   }
 
@@ -160,19 +160,19 @@ sealed trait RedBlackTree[+A] {
   }
 
   def reduceLeft[B >: A](f: (B, A) => B): Option[B] =
-    foldLeft(None, (x: Option[B], y: A) => x match {
+    foldLeft(Option.empty[B])((x: Option[B], y: A) => x match {
       case Some(x) => Some(f(x, y))
       case None => Some(y)
     })
 
   def reduceRight[B >: A](f: (A, B) => B): Option[B] =
-    foldRight(None, (x: A, y: Option[B]) => y match {
+    foldRight(Option.empty[B])((x: A, y: Option[B]) => y match {
       case Some(y) => Some(f(x, y))
       case None => Some(x)
     })
 
   override def toString: String =
-    s"RedBlackTree(${foldRight(List.empty[A], (e: A, acc: List[A]) => e :: acc).mkString(", ")})"
+    s"RedBlackTree(${foldRight(List.empty[A])((e: A, acc: List[A]) => e :: acc).mkString(", ")})"
 
 }
 
