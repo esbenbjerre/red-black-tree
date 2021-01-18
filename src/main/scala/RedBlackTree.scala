@@ -1,20 +1,19 @@
+import scala.annotation.tailrec
+
 sealed trait Color
 
 case object R extends Color
-
 case object B extends Color
-
 case object BB extends Color
 
 case object E extends RedBlackTree[Nothing]
-
 case object EE extends RedBlackTree[Nothing]
-
 case class T[+A](color: Color, left: RedBlackTree[A], element: A, right: RedBlackTree[A]) extends RedBlackTree[A]
 
 sealed trait RedBlackTree[+A] {
 
-  def contains[B >: A](x: B)(implicit ord: Ordering[B]): Boolean = {
+  @tailrec
+  final def contains[B >: A](x: B)(implicit ord: Ordering[B]): Boolean = {
     import ord.mkOrderingOps
     this match {
       case T(_, a, y, b) =>
@@ -142,34 +141,6 @@ sealed trait RedBlackTree[+A] {
     case T(_, a, x, b) => a.foldRight(f(x, b.foldRight(z)(f)))(f)
     case _ => z
   }
-
-  def findLeft(f: A => Boolean): Option[A] = this match {
-    case T(_, a, x, b) => a.findLeft(f) match {
-      case None => if (f(x)) Some(x) else b.findLeft(f)
-      case Some(y) => Some(y)
-    }
-    case _ => None
-  }
-
-  def findRight(f: A => Boolean): Option[A] = this match {
-    case T(_, a, x, b) => b.findRight(f) match {
-      case None => if (f(x)) Some(x) else a.findRight(f)
-      case Some(y) => Some(y)
-    }
-    case _ => None
-  }
-
-  def reduceLeft[B >: A](f: (B, A) => B): Option[B] =
-    foldLeft(Option.empty[B])((x: Option[B], y: A) => x match {
-      case Some(x) => Some(f(x, y))
-      case None => Some(y)
-    })
-
-  def reduceRight[B >: A](f: (A, B) => B): Option[B] =
-    foldRight(Option.empty[B])((x: A, y: Option[B]) => y match {
-      case Some(y) => Some(f(x, y))
-      case None => Some(x)
-    })
 
   override def toString: String =
     s"RedBlackTree(${foldRight(List.empty[A])((e: A, acc: List[A]) => e :: acc).mkString(", ")})"
